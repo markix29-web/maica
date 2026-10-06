@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>For You ♥</title>
+<style>
+:root{--deep:#4c0519;--blush:#ffe4e6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(circle at 50% 30%,#7f1d3a,var(--deep));color:var(--blush);font-family:Georgia,'Times New Roman',serif;overflow:hidden}
+.page{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1.2s;padding:env(safe-area-inset-top,0px) 16px env(safe-area-inset-bottom,0px)}
+#gal{opacity:0;pointer-events:none;justify-content:flex-start;overflow-y:auto;padding-top:calc(env(safe-area-inset-top,0px) + 28px);padding-bottom:90px}
+#gal.show{opacity:1;pointer-events:auto}
+.hint{margin-top:34px;font-style:italic;opacity:.85;animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.35}}
+.env{position:relative;width:min(80vw,300px);aspect-ratio:3/2;cursor:pointer;margin-top:60px}
+.back{position:absolute;inset:0;background:#f4a9b8;border-radius:6px;box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.letter{position:absolute;left:8%;right:8%;top:8%;bottom:8%;background:#fff8f0;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#7f1d3a;font-style:italic;text-align:center;transition:transform .9s .5s;z-index:1}
+.front{position:absolute;inset:0;z-index:2;background:#f9c5d0;clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%);border-radius:6px}
+.flap{position:absolute;left:0;right:0;top:0;height:55%;background:#ef93a6;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .6s;z-index:3}
+.seal{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);font-size:34px;z-index:4;transition:opacity .3s;animation:beat 1.4s infinite}
+@keyframes beat{50%{transform:translate(-50%,-50%) scale(1.2)}}
+.open .flap{transform:rotateX(180deg);z-index:0}
+.open .seal{opacity:0}
+.open .letter{transform:translateY(-62%)}
+h1{font-weight:400;font-size:clamp(1.7rem,7vw,2.6rem);margin:0 0 8px;text-align:center}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;width:100%;max-width:460px}
+.frame{background:#fff8f0;padding:8px 8px 22px;border-radius:3px;box-shadow:0 8px 22px rgba(0,0,0,.4);transform:rotate(var(--r))}
+.frame:nth-child(odd){--r:-2.5deg}.frame:nth-child(even){--r:2.5deg}
+.frame .ph{aspect-ratio:4/5;background:#fcd5dc;overflow:hidden}
+.frame img{width:100%;height:100%;object-fit:cover;display:block}
+#mus{position:fixed;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);width:48px;height:48px;border-radius:50%;border:0;background:#e11d48;color:#fff;font-size:20px;z-index:10;display:none}
+.heart{position:fixed;bottom:-30px;pointer-events:none;animation:up linear forwards;z-index:5}
+@keyframes up{to{transform:translateY(-110vh) rotate(25deg);opacity:0}}
+.note{max-width:460px;margin-top:32px;font-style:italic;line-height:1.75;text-align:center;opacity:.95}
+.note p{margin:0 0 18px}
+</style></head>
+<body>
+<audio id="bg" loop src="song.mp3"></audio>
+
+<div class="page" id="intro">
+  <div class="env" id="env">
+    <div class="back"></div>
+    <div class="letter">To Maica ♥</div>
+    <div class="front"></div>
+    <div class="flap"></div>
+    <div class="seal">❤️</div>
+  </div>
+  <div class="hint">Tap the envelope</div>
+</div>
+
+<div class="page" id="gal">
+  <h1 id="title"></h1>
+  <div class="grid" id="grid"></div>
+  <div class="note">
+    <p>This is this girl, I met her one day never knowing she'd become someone so important in my life. She didn't always see her own worth and sometimes she made herself feel like she wasn't enough. Pero para nako, enough na kaayo ka. I wish you could see yourself the way I saw you.</p>
+    <p>I was always proud of you, even sa mga little things nga para nimo wala lang. I was grateful for every moment with you, and most of all, thankful ko nga gipili ko nimo and you let me be a part of your life.</p>
+    <p>I loved you more than words could explain. So please, ayaw kaayo pag-doubt sa imong self. Don't forget your worth, because you were always worthy, enough and someone I was truly proud of.</p>
+    <p>Thank you for choosing me. thankyousomuchh for everything and I was always grateful nga ikaw ang nakaila ug akong gi love😊.</p>
+  </div>
+</div>
+<button id="mus" aria-label="Toggle music">🔊</button>
+
+<script>
+/* ===== EDIT THESE ===== */
+const TITLE = "For You, Maica";
+const PHOTOS = ["photo1.jpg", "photo2.jpg", "photo3.jpg", "photo4.jpg"];
+/* ====================== */
+const $ = id => document.getElementById(id);
+$('title').textContent = TITLE;
+for (let i = 0; i < PHOTOS.length; i++) {
+  const f = document.createElement('div'); f.className = 'frame';
+  f.innerHTML = '<div class="ph"><img alt="Our photo" src="' + PHOTOS[i] + '"></div>';
+  $('grid').append(f);
+}
+let opened = false, playing = true;
+$('env').addEventListener('click', () => {
+  if (opened) return; opened = true;
+  $('env').classList.add('open'); $('bg').volume = .7;
+  $('bg').play().catch(() => { document.addEventListener('pointerdown', () => $('bg').play(), {once:true}); });
+  setInterval(spawn, 600);
+  setTimeout(() => { $('intro').style.opacity = 0; $('intro').style.pointerEvents = 'none'; $('gal').classList.add('show'); $('mus').style.display = 'block'; }, 2300);
+});
+$('mus').onclick = () => { playing = !playing; playing ? $('bg').play() : $('bg').pause(); $('mus').textContent = playing ? '🔊' : '🔇'; };
+function spawn() {
+  const h = document.createElement('div'); h.className = 'heart'; h.textContent = ['❤️','💗','💖','🌹'][Math.floor(Math.random()*4)];
+  h.style.left = Math.random()*100 + 'vw'; h.style.fontSize = (14 + Math.random()*18) + 'px'; h.style.animationDuration = (5 + Math.random()*4) + 's';
+  document.body.append(h); setTimeout(() => h.remove(), 9500);
+}
+</script>
+</body></html>
